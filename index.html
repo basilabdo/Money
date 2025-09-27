@@ -2,37 +2,44 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>💸 حساب باسل وهشام 💸</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body { font-family: 'Tajawal', sans-serif; }
     .fun { transition: all 0.18s ease; }
-    .fun:active { transform: scale(0.98); }
+    .fun:active { transform: scale(0.96); }
   </style>
 </head>
-<body class="bg-gradient-to-r from-pink-200 via-purple-200 to-blue-200 min-h-screen flex flex-col justify-center items-center">
-  <h1 class="text-3xl font-bold mb-6">💸 حساب باسل وهشام 💸</h1>
+<body class="bg-gradient-to-b from-pink-200 via-purple-200 to-blue-200 min-h-screen flex flex-col items-center justify-center p-4">
 
-  <div class="flex items-center gap-12">
+  <h1 class="text-2xl font-bold mb-6 text-center">💸 حساب باسل وهشام 💸</h1>
+
+  <!-- Debt Info -->
+  <div class="bg-white bg-opacity-70 rounded-2xl shadow-xl p-6 w-full max-w-sm text-center mb-8">
+    <p class="text-lg mb-2">المبلغ بينكما</p>
+    <div id="debt" class="text-4xl font-bold">0</div>
+    <p id="status" class="mt-2 text-lg"></p>
+  </div>
+
+  <!-- Buttons -->
+  <div class="flex flex-col gap-6 w-full max-w-sm">
     <!-- Basil -->
-    <div class="flex flex-col items-center">
-      <div class="text-6xl">👦</div>
-      <p class="mt-2 font-bold">باسل</p>
-      <button onclick="updateDebt('Basil', 1)" class="fun mt-4 px-6 py-3 bg-green-400 rounded-2xl shadow text-lg">+1</button>
-    </div>
-
-    <!-- Debt Info -->
-    <div class="text-center">
-      <p class="text-xl mb-2">المبلغ بينكما</p>
-      <div id="debt" class="text-4xl font-bold">0</div>
-      <p id="status" class="mt-2 text-lg"></p>
+    <div class="flex flex-col items-center bg-white bg-opacity-70 rounded-2xl shadow-md p-4">
+      <div class="text-5xl">👦</div>
+      <p class="mt-2 font-bold text-lg">باسل</p>
+      <button onclick="updateDebt('Basil', 1)" class="fun mt-4 w-full py-3 bg-green-400 text-lg rounded-xl shadow">
+        +1 رينجت
+      </button>
     </div>
 
     <!-- Hesham -->
-    <div class="flex flex-col items-center">
-      <div class="text-6xl">👨</div>
-      <p class="mt-2 font-bold">هشام</p>
-      <button onclick="updateDebt('Hesham', 1)" class="fun mt-4 px-6 py-3 bg-green-400 rounded-2xl shadow text-lg">+1</button>
+    <div class="flex flex-col items-center bg-white bg-opacity-70 rounded-2xl shadow-md p-4">
+      <div class="text-5xl">👨</div>
+      <p class="mt-2 font-bold text-lg">هشام</p>
+      <button onclick="updateDebt('Hesham', 1)" class="fun mt-4 w-full py-3 bg-green-400 text-lg rounded-xl shadow">
+        +1 رينجت
+      </button>
     </div>
   </div>
 
@@ -53,7 +60,6 @@
     const db = getFirestore(app);
     const debtRef = doc(db, "debts", "basil-hesham");
 
-    // إنشاء المستند إذا لم يكن موجود
     async function initDebt() {
       const snap = await getDoc(debtRef);
       if (!snap.exists()) {
@@ -62,7 +68,6 @@
     }
     initDebt();
 
-    // استماع للتغييرات
     onSnapshot(debtRef, (docSnap) => {
       if (docSnap.exists()) {
         const b = docSnap.data().balance ?? 0;
@@ -72,7 +77,6 @@
       }
     });
 
-    // التحديث عند الضغط على الأزرار
     async function updateDebt(person, amount) {
       const snap = await getDoc(debtRef);
       let balance = 0;
@@ -81,14 +85,11 @@
       }
       if (person === 'Basil') balance += amount;
       else balance -= amount;
-
       await setDoc(debtRef, { balance });
     }
 
-    // ربط الدالة مع الأزرار
     window.updateDebt = updateDebt;
 
-    // عرض الحالة
     function render(balance) {
       document.getElementById("debt").innerText = Math.abs(balance) + " رينجت";
       const status = document.getElementById("status");
